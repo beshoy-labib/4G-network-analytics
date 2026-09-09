@@ -8,8 +8,6 @@ Short version of what the data says: the operator with the **weakest** coverage 
 
 > **Data availability:** the datasets belong to **Ericsson** and are not mine to share, so `RSRP.csv` and `TrafficVolume.csv` are **not included** in this repository. The notebooks, cleaning logic, charts and findings are all here and fully documented; the outputs below were rendered from the real data.
 
-Data visualization task for the Sultan Hussien Innovation Center AI challenge (Problem 1, §3.1).
-
 ---
 
 ## Contents
