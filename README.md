@@ -14,15 +14,18 @@ Data visualization task for the Sultan Hussien Innovation Center AI challenge (P
 
 ## Contents
 
-| File | What it does |
-|---|---|
-| `RSRP_EDA.ipynb` | Cleaning + EDA of `RSRP.csv` → `rsrp_clean.parquet` |
-| `Traffic_Volume_EDA.ipynb` | Cleaning + EDA of `TrafficVolume.csv` → `traffic_clean.parquet` |
-| `Dashboard.ipynb` | The 4 required charts + findings |
-| `make_timelapse.py` | Renders Chart 1 to `timelapse.gif` |
-| `make_screenshots.py` | Renders Charts 2–4 to `docs/*.png` |
+```
+├─ notebooks/
+│  ├─ RSRP_EDA.ipynb             cleaning + EDA of RSRP.csv        → rsrp_clean.parquet
+│  ├─ Traffic_Volume_EDA.ipynb   cleaning + EDA of TrafficVolume.csv → traffic_clean.parquet
+│  └─ Dashboard.ipynb            the 4 required charts + findings
+├─ scripts/
+│  ├─ make_timelapse.py          renders Chart 1 to docs/timelapse.gif
+│  └─ make_screenshots.py        renders Charts 2–4 to docs/*.png
+└─ docs/                         the rendered images used in this README
+```
 
-Run order: `RSRP_EDA.ipynb` → `Traffic_Volume_EDA.ipynb` → `Dashboard.ipynb`.
+Run the notebooks in order: `RSRP_EDA` → `Traffic_Volume_EDA` → `Dashboard`.
 
 ## Setup
 
@@ -30,7 +33,14 @@ Run order: `RSRP_EDA.ipynb` → `Traffic_Volume_EDA.ipynb` → `Dashboard.ipynb`
 pip install pandas pyarrow plotly ipywidgets h3 kaleido pillow
 ```
 
-The source CSVs are not distributed (see above). To run the notebooks end to end you need your own copy of `RSRP.csv` and `TrafficVolume.csv` in the project root, with the paths in the EDA notebooks updated to match.
+The source CSVs are not distributed (see above). To run this end to end, put your own `RSRP.csv` and `TrafficVolume.csv` in the project root — the notebooks read them from there, and write the cleaned Parquet files back to the same place.
+
+The two scripts are run from the project root:
+
+```bash
+python scripts/make_timelapse.py
+python scripts/make_screenshots.py
+```
 
 ---
 
@@ -101,20 +111,31 @@ The y-axis range is derived from the selected metric, not hard-coded — a fixed
 
 ## Findings
 
-**1. Coverage: C leads, A trails — and A carries the most users.**
-Mean RSRP is **−80.9 dBm** for C against **−84.6** for B and **−85.5** for A. Only **4.5 %** of C's samples fall below −100 dBm, against **9.1 %** for B and **17.1 %** for A. The bottom decile separates them sharpest: C's P10 is **−96 dBm**, A's is **−107 dBm** — ~11 dB, more than a tenfold difference in received power. Yet **A accounts for 54.6 % of all RSRP samples**, more than B and C combined. The weakest coverage serves the largest population.
+> Reading the numbers: RSRP is measured in **dBm** and is always negative — **closer to zero means better signal**. Around −80 is good, −110 is poor.
 
-**2. Traffic: B moves the data, A moves the people.**
-B carries **64.6 % of all downlink traffic from 28.7 % of samples**; A is the mirror image at **49.6 % of samples but 23.9 % of downlink GB**. Per sample, a B user pulls roughly **six times** the downlink of an A user. DL/UL ratios say the same: B **17.8:1**, A **10.9:1**, C **8.3:1** — a video/download-heavy mix on B, a more upload-balanced one on C. **B is a capacity story, A is a coverage story.**
+### The three operators at a glance
 
-**3. Downlink is extremely concentrated, and the hotspots are B's.**
-At H3 resolution 7, **10 hexagons out of 470 carry 60.5 % of Riyadh's downlink** — ~50 km² of the city accounting for two thirds of the data. The largest hexagon holds **805 GB for B** against 0.9 GB for A and 0.1 GB for C. That ~900:1 ratio is too lopsided to be real demand; more likely one very heavy user or a small cluster — a caution against reading these bubbles as market share.
+| | Operator A | Operator B | Operator C |
+|---|---|---|---|
+| Coverage quality | Worst | Middle | **Best** |
+| Share of users | **55 %** | 23 % | 23 % |
+| Share of downloaded data | 24 % | **65 %** | 11 % |
+| Measurements with poor signal | 17 % | 9 % | **5 %** |
 
-**4. The city breathes: a 6× day/night swing.**
-Activity troughs at **04:00 (22.5 k samples)** and peaks at **16:00 (140.1 k)** — a **6.2×** swing, with a broad elevated block from **16:00–18:00** holding past 22:00. This is a Riyadh evening-social pattern, not the twin commuter spikes of a European city; the busy hour to plan against is the late afternoon, not the morning. Median RSRP runs 6–7 dB *better* in the dead hours, but that mixes network load with a change in who is measuring — don't over-read it.
+**1. The operator with the worst coverage serves the most people.**
+C has clearly the best signal, A the worst — and the gap is widest exactly where it hurts, in the weakest locations. Yet A carries more than half of all measurements, more than B and C combined. A's coverage problem is the one affecting the most people.
 
-**5. Handsets: the ranking is real, the tail is not.**
-**Samsung is 89.1 % of every sample**; Huawei is second at 3.0 % and nothing else clears 1.5 %. Among the 13 manufacturers with ≥1,000 samples on an operator the spread is ~14 dB — weakest HMD Global (−89.9), Sony (−89.0), Lenovo (−88.5); strongest TCL (−75.9), Huawei (−80.2), Xiaomi (−83.2). The **HMD Global / Sony / Lenovo cluster sits 4–6 dB below Samsung**, a real and actionable gap for a care team. Two warnings, both demonstrable with the slider: **TCL's −75.9 is not a finding** (raise the threshold and it disappears), and **Samsung is the baseline, not a competitor** — at 89 % of the data its average *is* the network average.
+**2. B sells data, A sells connections.**
+B carries about **two thirds of all downloaded data from under a third of the measurements** — roughly six times more data per user than A. A is the mirror image: many users, little data. So **B's risk is congestion, A's risk is that its users can't use the data they pay for.**
+
+**3. Almost all the traffic comes from a handful of places.**
+Split the city into ~5 km² tiles and **10 tiles out of 470 carry 60 % of all downloaded data**. For a network planner that's the whole story — upgrading those ten spots beats spending evenly across the map. One caveat: the single biggest tile belongs almost entirely to one operator, so lopsidedly that it's more likely one very heavy user than a real difference in demand.
+
+**4. The city is busiest in the late afternoon, not the morning.**
+Activity is about **6× higher at its 16:00 peak than at its 04:00 low**, and stays high from late afternoon until well past 22:00. That's a Riyadh evening-social rhythm, not the twin commuter spikes of a European city — so capacity should be planned around the late afternoon.
+
+**5. Some phone brands really do report worse signal — but ignore the rare ones.**
+**Samsung is ~90 % of all measurements**, so its average *is* the network average, and every other brand is really being compared against Samsung. Among brands with enough data, **HMD Global (Nokia), Sony and Lenovo sit consistently below Samsung** — same network, same city, same days, so this is a handset gap worth flagging to a support team. Brands with only a few thousand measurements swing wildly and mean nothing; that's exactly what the minimum-samples slider is for.
 
 ---
 

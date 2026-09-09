@@ -21,8 +21,9 @@ test.py
 
 # Internal working notes / superseded scratch
 PLAN.md
-notebooks/
-timelapse.gif
+/timelapse.gif
+notebooks/01_profiling.py
+notebooks/profiling_output.txt
 
 # Challenge brief (not redistributable)
 *.pdf

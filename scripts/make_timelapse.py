@@ -37,6 +37,6 @@ for hour, g in grid.groupby("Hour"):
                                                                              palette=Image.ADAPTIVE))
     print(hour, end=" ", flush=True)
 
-frames[0].save("timelapse.gif", save_all=True, append_images=frames[1:],
+frames[0].save("docs/timelapse.gif", save_all=True, append_images=frames[1:],
                duration=500, loop=0, optimize=True)
-print("\ntimelapse.gif")
+print("\ndocs/timelapse.gif")
