@@ -1,0 +1,28 @@
+# Ericsson-owned data - not redistributable
+RSRP.csv
+TrafficVolume.csv
+*.csv
+*.parquet
+DataDescription.xlsx
+
+# Power BI files (embed the source data)
+*.pbix
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Backups / scratch
+*.backup.ipynb
+test.py
+
+# Internal working notes / superseded scratch
+PLAN.md
+notebooks/
+timelapse.gif
+
+# Challenge brief (not redistributable)
+*.pdf
