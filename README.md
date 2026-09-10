@@ -116,7 +116,7 @@ The y-axis range is derived from the selected metric, not hard-coded — a fixed
 | | Operator A | Operator B | Operator C |
 |---|---|---|---|
 | Coverage quality | Worst | Middle | **Best** |
-| Share of users | **55 %** | 23 % | 23 % |
+| Share of users | **55 %** | 23 % | 22 % |
 | Share of downloaded data | 24 % | **65 %** | 11 % |
 | Measurements with poor signal | 17 % | 9 % | **5 %** |
 
